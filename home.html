@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmissioGuard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <div class="menu-icon">☰</div>
+        <img src="/api/placeholder/30/30" alt="Leaf Logo" class="logo">
+        <div class="profile-icon">
+            <img src="/api/placeholder/40/40" alt="Profile" style="border-radius: 50%">
+        </div>
+    </div>
+
+    
+
+    <div class="dropdown">
+        <h1 class="dashboard_heading">EmissioGuard</h1>
+        <select class="select_dropdown">
+            <option value="" disabled selected>Choose a vehicle</option>
+            <option>Alto 800</option>
+            <option>Grand I10</option>
+            <option>Mahindra XUV700</option>
+        </select>
+    </div>
+
+    <div class="progress-container">
+        <svg class="progress-circle" viewBox="0 0 100 100">
+            <circle class="progress-background" cx="50" cy="50" r="40"/>
+            <circle class="progress-bar" cx="50" cy="50" r="40"/>
+        </svg>
+        <div class="progress-value">
+            <h1 id="valueDisplay">0</h1>
+            <p id="statusText">Starting...</p>
+        </div>
+    </div>
+
+    <input type="number" id="valueInput" placeholder="Enter value (0-200)" min="0" max="200">
+    <div class="history">
+        <div class="history-header">
+            <span>History</span>
+            <span>›</span> 
+        </div>
+        <div class="history-values">
+            <div class="history-value">120</div>
+            <div class="history-value">134</div>
+            <div class="history-value">127</div>
+            <div class="history-value">113</div>
+            <div class="history-value">132</div>
+        </div>
+    </div>
+
+    <div class="action-button">
+        Take Steps for Emissions →
+    </div>
+
+    <div class="footer-button">
+        <span style="font-size: 24px">⬚</span>
+        Scan QR
+    </div>
+
+    <div class="footer-button">
+        <span style="font-size: 24px">▶</span>
+        Test
+    </div>
+    <script>
+        const progressBar = document.querySelector('.progress-bar');
+        const valueDisplay = document.getElementById('valueDisplay');
+        const statusText = document.getElementById('statusText');
+        const valueInput = document.getElementById('valueInput');
+
+        // Calculate the circumference of the circle
+        const radius = 40;
+        const circumference = 2 * Math.PI * radius;
+        progressBar.style.strokeDasharray = circumference;
+
+        function updateProgress(value) {
+            // Ensure value is between 0 and 200
+            value = Math.min(Math.max(value, 0), 200);
+            
+            // Calculate percentage (0-100%)
+            const percentage = (value / 200) * 100;
+            
+            // Calculate the stroke-dashoffset
+            const offset = circumference - (percentage / 100) * circumference;
+            progressBar.style.strokeDashoffset = offset;
+
+            // Update color based on value
+            let color;
+            let status;
+            if (value === 0) {
+                color = '#666'; // Grey
+                status = 'No data';
+            } else if (value < 70) {
+                color = '#ff4444'; // Red
+                status = 'High emissions';
+            } else if (value < 130) {
+                color = '#ffbb33'; // Yellow
+                status = 'Moderate emissions';
+            } else {
+                color = '#00ff66'; // Green
+                status = "You're on great track!";
+            }
+
+            progressBar.style.stroke = color;
+            valueDisplay.textContent = Math.round(value);
+            statusText.textContent = status;
+        }
+
+        // Handle input changes
+        valueInput.addEventListener('input', (e) => {
+            updateProgress(parseFloat(e.target.value) || 0);
+        });
+
+        // Initial animation
+        updateProgress(125);
+    </script>
+
+</body>
+</html>

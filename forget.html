@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - EmissioGuard</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <div class="logo-container">
+        <img src="/api/placeholder/60/60" alt="Carbon Dashboard Logo" class="logo">
+        <h1 class="title">Reset Password</h1>
+        <p class="subtitle">Enter your email address and we'll send you instructions to reset your password</p>
+    </div>
+
+    <form class="reset-form">
+        <div class="info-box">
+            <strong>Password Reset Instructions</strong>
+            1. Enter your registered email address<br>
+            2. Check your inbox for reset instructions<br>
+            3. Click the reset link in the email<br>
+            4. Create your new password
+        </div>
+
+        <div class="success-message" id="successMessage">
+            Password reset instructions have been sent to your email address. Please check your inbox.
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" for="email">Email Address</label>
+            <input type="email" id="email" class="input-field" placeholder="Enter your registered email">
+        </div>
+
+        <button type="submit" class="reset-button">Send Reset Instructions</button>
+
+        <div class="back-to-login">
+            Remember your password?<a href="index.html">Back to Login</a>
+        </div>
+    </form>
+
+    <script>
+        document.querySelector('.reset-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('successMessage').classList.add('visible');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.logo-container {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 16px;
+    text-align: center;
+    max-width: 300px;
+    margin: 0 auto;
+    line-height: 1.4;
+}
+
+.reset-form {
+    width: 100%;
+    max-width: 400px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #888;
+    font-size: 14px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 15px;
+    background-color: #333;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+}
+
+.input-field:focus {
+    outline: 2px solid #00ff66;
+    background-color: #444;
+}
+
+.reset-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #00ff66;
+    color: black;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.reset-button:hover {
+    background-color: #00e65c;
+}
+
+.back-to-login {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+}
+
+.back-to-login a {
+    color: #00ff66;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.info-box {
+    background-color: #333;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #888;
+}
+
+.info-box strong {
+    color: white;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Success Message Styles (initially hidden) */
+.success-message {
+    background-color: rgba(0, 255, 102, 0.1);
+    border: 1px solid #00ff66;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: none;
+}
+
+.success-message.visible {
+    display: block;
+}

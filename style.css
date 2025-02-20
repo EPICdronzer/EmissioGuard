@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.menu-icon, .profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+}
+
+.dashboard_heading {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.dropdown {
+    width: 100%;
+    background: linear-gradient(to bottom, #222222, #333333);
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.select-container {
+    position: relative;
+    width: 100%;
+}
+
+.select_dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    height: 70px;
+    background-color: #333;
+    padding: 15px 40px 15px 15px;
+    border-radius: 12px;
+    display: flex;
+    color: white;
+    position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+
+
+  .progress-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 30px;
+}
+
+.progress-circle {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-background {
+    fill: none;
+    stroke: #333;
+    stroke-width: 8;  /* Changed from 20 to 8 */
+}
+
+.progress-bar {
+    fill: none;
+    stroke-width: 8;  /* Changed from 20 to 8 */
+    stroke-linecap: round;
+    transform-origin: center;
+    transition: stroke-dashoffset 1s ease-in-out, stroke 0.5s ease;
+}
+
+.progress-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.progress-value h1 {
+    font-size: 48px;
+    margin-bottom: 5px;
+}
+
+.progress-value p {
+    color: #888;
+    font-size: 14px;
+}
+
+
+.history {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.history-values {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.history-value {
+    background-color: #1a1a1a;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+}
+
+.action-button {
+    background-color: #00ff66;
+    color: black;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.footer-button {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
