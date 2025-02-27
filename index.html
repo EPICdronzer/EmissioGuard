@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <input type="number" id="valueInput" placeholder="Enter value (0-200)" min="0" max="200">
+    <input type="number" id="valueInput" placeholder="Enter value (0-100)" min="0" max="100">
     <div class="history">
         <div class="history-header">
             <span>History</span>
@@ -72,23 +72,21 @@
         const statusText = document.getElementById('statusText');
         const valueInput = document.getElementById('valueInput');
 
-        // Calculate the circumference of the circle
         const radius = 40;
         const circumference = 2 * Math.PI * radius;
         progressBar.style.strokeDasharray = circumference;
 
         function updateProgress(value) {
-            // Ensure value is between 0 and 200
+            
             value = Math.min(Math.max(value, 0), 100);
             
-            // Calculate percentage (0-100%)
+            // Calculate percentage
             const percentage = (value / 100) * 100;
             
             // Calculate the stroke-dashoffset
             const offset = circumference - (percentage / 100) * circumference;
             progressBar.style.strokeDashoffset = offset;
 
-            // Update color based on value
             let color;
             let status;
             if (value === 0) {
@@ -110,13 +108,12 @@
             statusText.textContent = status;
         }
 
-        // Handle input changes
         valueInput.addEventListener('input', (e) => {
             updateProgress(parseFloat(e.target.value) || 0);
         });
 
         // Initial animation
-        updateProgress(125);
+        updateProgress(0);
     </script>
 
 </body>
