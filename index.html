@@ -79,10 +79,10 @@
 
         function updateProgress(value) {
             // Ensure value is between 0 and 200
-            value = Math.min(Math.max(value, 0), 200);
+            value = Math.min(Math.max(value, 0), 100);
             
             // Calculate percentage (0-100%)
-            const percentage = (value / 200) * 100;
+            const percentage = (value / 100) * 100;
             
             // Calculate the stroke-dashoffset
             const offset = circumference - (percentage / 100) * circumference;
@@ -94,10 +94,10 @@
             if (value === 0) {
                 color = '#666'; // Grey
                 status = 'No data';
-            } else if (value < 70) {
+            } else if (value < 30) {
                 color = '#ff4444'; // Red
                 status = 'High emissions';
-            } else if (value < 130) {
+            } else if (value < 70) {
                 color = '#ffbb33'; // Yellow
                 status = 'Moderate emissions';
             } else {
