@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EmissioGuard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-app.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.1/firebase-database.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,15 +17,15 @@
         </div>
     </div>
 
-    
+    <div id="statusBadge" class="status-badge inactive">Sensors: OFF</div>
 
     <div class="dropdown">
         <h1 class="dashboard_heading">EmissioGuard</h1>
-        <select class="select_dropdown">
+        <select class="select_dropdown" id="vehicleSelect">
             <option value="" disabled selected>Choose a vehicle</option>
-            <option>Alto 800</option>
-            <option>Grand I10</option>
-            <option>Mahindra XUV700</option>
+            <option value="alto">Alto 800</option>
+            <option value="i10">Grand I10</option>
+            <option value="xuv">Mahindra XUV700</option>
         </select>
     </div>
 
@@ -38,53 +40,89 @@
         </div>
     </div>
 
-    <input type="number" id="valueInput" placeholder="Enter value (0-100)" min="0" max="100">
     <div class="history">
         <div class="history-header">
             <span>History</span>
             <span>›</span> 
         </div>
-        <div class="history-values">
-            <div class="history-value">120</div>
-            <div class="history-value">134</div>
-            <div class="history-value">127</div>
-            <div class="history-value">113</div>
-            <div class="history-value">132</div>
+        <div class="history-values" id="historyContainer">
+            <div class="history-value">--</div>
+            <div class="history-value">--</div>
+            <div class="history-value">--</div>
+            <div class="history-value">--</div>
+            <div class="history-value">--</div>
         </div>
     </div>
 
-    <div class="action-button">
+    <div class="action-button" id="actionButton">
         Take Steps for Emissions →
     </div>
 
-    <div class="footer-button">
+    <div class="footer-button" id="scanButton">
         <span style="font-size: 24px">⬚</span>
         Scan QR
     </div>
 
-    <div class="footer-button">
+    <div class="footer-button" id="testButton">
         <span style="font-size: 24px">▶</span>
         Test
     </div>
+    
+    <div class="status-overlay" id="statusOverlay">
+        <div class="status-message">
+            <h2 id="overlayTitle">Sensors Active</h2>
+            <p id="overlayMessage">Your vehicle emissions are currently being monitored in real-time.</p>
+        </div>
+        <button class="overlay-button" id="overlayButton">OK</button>
+    </div>
+
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrPlJF1I8Djb1orr8EMobyOGUkXlpZ-7E", // This is a placeholder, use your own API key
+            authDomain: "emissioguard.firebaseapp.com",
+            databaseURL: "https://emissioguard-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "emissioguard",
+            storageBucket: "emissioguard.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef1234567890"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // DOM Elements
         const progressBar = document.querySelector('.progress-bar');
         const valueDisplay = document.getElementById('valueDisplay');
         const statusText = document.getElementById('statusText');
-        const valueInput = document.getElementById('valueInput');
-
+        const testButton = document.getElementById('testButton');
+        const statusBadge = document.getElementById('statusBadge');
+        const historyContainer = document.getElementById('historyContainer');
+        const actionButton = document.getElementById('actionButton');
+        const scanButton = document.getElementById('scanButton');
+        const vehicleSelect = document.getElementById('vehicleSelect');
+        const statusOverlay = document.getElementById('statusOverlay');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlayMessage = document.getElementById('overlayMessage');
+        const overlayButton = document.getElementById('overlayButton');
+        
+        // Constants
         const radius = 40;
         const circumference = 2 * Math.PI * radius;
         progressBar.style.strokeDasharray = circumference;
-
+        
+        // State variables
+        let isSensorRunning = false;
+        let currentVehicle = '';
+        let emissionsData = [];
+        
+        // Initialize the progress circle
         function updateProgress(value) {
-            
             value = Math.min(Math.max(value, 0), 100);
             
-            // Calculate percentage
-            const percentage = (value / 100) * 100;
-            
             // Calculate the stroke-dashoffset
-            const offset = circumference - (percentage / 100) * circumference;
+            const offset = circumference - (value / 100) * circumference;
             progressBar.style.strokeDashoffset = offset;
 
             let color;
@@ -107,14 +145,156 @@
             valueDisplay.textContent = Math.round(value);
             statusText.textContent = status;
         }
-
-        valueInput.addEventListener('input', (e) => {
-            updateProgress(parseFloat(e.target.value) || 0);
+        
+        // Convert sensor readings to emission score (0-100)
+        function calculateEmissionScore(hcPpm, coPpm) {
+            // Higher score is better (lower emissions)
+            // HC and CO ranges based on common emission standards
+            const maxHC = 1000; // Max expected HC in ppm
+            const maxCO = 10000; // Max expected CO in ppm
+            
+            // Normalize values (lower is better)
+            const hcNormalized = Math.max(0, 1 - (hcPpm / maxHC));
+            const coNormalized = Math.max(0, 1 - (coPpm / maxCO));
+            
+            // Weighted average (equal weights for simplicity)
+            const score = (hcNormalized * 0.5 + coNormalized * 0.5) * 100;
+            
+            return Math.min(Math.max(score, 0), 100);
+        }
+        
+        // Update history container with latest readings
+        function updateHistory(readings) {
+            const historyItems = historyContainer.querySelectorAll('.history-value');
+            
+            readings.forEach((reading, index) => {
+                if (index < historyItems.length) {
+                    historyItems[index].textContent = reading;
+                }
+            });
+        }
+        
+        // Toggle sensor state
+        function toggleSensors() {
+            isSensorRunning = !isSensorRunning;
+            
+            // Update UI
+            testButton.classList.toggle('active', isSensorRunning);
+            statusBadge.classList.toggle('active', isSensorRunning);
+            statusBadge.classList.toggle('inactive', !isSensorRunning);
+            statusBadge.textContent = isSensorRunning ? 'Sensors: ON' : 'Sensors: OFF';
+            
+            // Show overlay message
+            showOverlay(
+                isSensorRunning ? 'Sensors Activated' : 'Sensors Deactivated',
+                isSensorRunning ? 
+                    'Your vehicle emissions are now being monitored in real-time.' : 
+                    'Emission monitoring has been turned off.'
+            );
+            
+            // Set control flag in Firebase
+            database.ref('/control').set({
+                running: isSensorRunning,
+                vehicle: currentVehicle,
+                timestamp: new Date().toISOString()
+            });
+            
+            if (isSensorRunning) {
+                // Start listening for sensor data
+                listenForSensorData();
+            } else {
+                // Stop listening
+                database.ref('/sensorData').off();
+            }
+        }
+        
+        // Listen for latest sensor data
+        function listenForSensorData() {
+            database.ref('/sensorData').limitToLast(1).on('child_added', (snapshot) => {
+                const data = snapshot.val();
+                
+                if (data) {
+                    // Calculate emission score based on HC and CO values
+                    const emissionScore = calculateEmissionScore(data.HC_ppm, data.CO_ppm);
+                    
+                    // Update the progress circle
+                    updateProgress(emissionScore);
+                    
+                    // Add to history data
+                    emissionsData.unshift(Math.round(emissionScore));
+                    if (emissionsData.length > 5) {
+                        emissionsData.pop();
+                    }
+                    
+                    // Update history display
+                    updateHistory(emissionsData);
+                }
+            });
+        }
+        
+        // Show status overlay
+        function showOverlay(title, message) {
+            overlayTitle.textContent = title;
+            overlayMessage.textContent = message;
+            statusOverlay.classList.add('visible');
+        }
+        
+        // Hide status overlay
+        function hideOverlay() {
+            statusOverlay.classList.remove('visible');
+        }
+        
+        // Event Listeners
+        testButton.addEventListener('click', toggleSensors);
+        
+        vehicleSelect.addEventListener('change', (e) => {
+            currentVehicle = e.target.value;
+            
+            // If sensors are running, update the vehicle in Firebase
+            if (isSensorRunning) {
+                database.ref('/control/vehicle').set(currentVehicle);
+            }
+            
+            showOverlay(
+                'Vehicle Selected',
+                `You've selected ${e.target.options[e.target.selectedIndex].text}. Start the test to monitor emissions.`
+            );
         });
-
-        // Initial animation
+        
+        actionButton.addEventListener('click', () => {
+            showOverlay(
+                'Emission Reduction Tips',
+                'Regular maintenance, proper tire inflation, and avoiding excessive idling can help reduce your vehicle emissions.'
+            );
+        });
+        
+        scanButton.addEventListener('click', () => {
+            showOverlay(
+                'QR Scan',
+                'QR scanning is not available in this demo version.'
+            );
+        });
+        
+        overlayButton.addEventListener('click', hideOverlay);
+        
+        // Check if sensors are already running
+        database.ref('/control/running').once('value', (snapshot) => {
+            if (snapshot.exists() && snapshot.val() === true) {
+                isSensorRunning = true;
+                
+                // Update UI
+                testButton.classList.add('active');
+                statusBadge.classList.add('active');
+                statusBadge.classList.remove('inactive');
+                statusBadge.textContent = 'Sensors: ON';
+                
+                // Start listening for data
+                listenForSensorData();
+            }
+        });
+        
+        // Initialize
         updateProgress(0);
     </script>
-
 </body>
 </html>

@@ -71,10 +71,9 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
-  }
+}
 
-
-  .progress-container {
+.progress-container {
     position: relative;
     width: 250px;
     height: 250px;
@@ -90,12 +89,12 @@ body {
 .progress-background {
     fill: none;
     stroke: #333;
-    stroke-width: 8;  /* Changed from 20 to 8 */
+    stroke-width: 8;
 }
 
 .progress-bar {
     fill: none;
-    stroke-width: 8;  /* Changed from 20 to 8 */
+    stroke-width: 8;
     stroke-linecap: round;
     transform-origin: center;
     transition: stroke-dashoffset 1s ease-in-out, stroke 0.5s ease;
@@ -118,7 +117,6 @@ body {
     color: #888;
     font-size: 14px;
 }
-
 
 .history {
     background-color: #333;
@@ -156,14 +154,97 @@ body {
     text-align: center;
     margin-bottom: 20px;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .footer-button {
     background-color: #333;
+    color: white;
     padding: 15px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.footer-button.active {
+    background-color: #00ff66;
+    color: black;
+}
+
+#valueInput {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #333;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-badge.active {
+    background-color: #00ff66;
+    color: black;
+}
+
+.status-badge.inactive {
+    background-color: #666;
+    color: white;
+}
+
+.status-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.status-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.status-message {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 300px;
+}
+
+.status-message h2 {
+    margin-bottom: 10px;
+}
+
+.overlay-button {
+    background-color: #00ff66;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
 }
